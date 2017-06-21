@@ -21,7 +21,8 @@ public class NetworkUtilities {
     public static final String PARAM_SOURCE = "source";
     public static final String PARAM_SORTBY = "sortBy";
     public static final String PARAM_APIKEY = "apiKey";
-    public static final String APIKEY = "cacb8d48e33f438dbdcddabb90031126";
+    //TODO:replace APIKEY with working key
+    public static final String APIKEY = "";
 
     public static URL makeURL(String source, String sortBy){
         Uri uri = Uri.parse(NEWSAPI_BASE_URL).buildUpon()
