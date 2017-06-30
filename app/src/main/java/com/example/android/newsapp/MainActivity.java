@@ -1,8 +1,12 @@
 package com.example.android.newsapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,20 +15,27 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.newsapp.models.NewsItem;
+
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     static final String TAG = "MainActivity";
     private ProgressBar progress;
-    private TextView textView;
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         progress = (ProgressBar) findViewById(R.id.progressBar);
-        textView = (TextView)findViewById(R.id.displayNews);
+        rv = (RecyclerView) findViewById(R.id.displayNews);
+
+        rv.setLayoutManager(new LinearLayoutManager(this));
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -38,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         task.execute();
         return true;
     }
-    class NetworkTask extends AsyncTask<URL,Void, String> {
+    class NetworkTask extends AsyncTask<URL,Void, ArrayList<NewsItem>> {
 
         @Override
         protected void onPreExecute() {
@@ -49,26 +60,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... params) {
-            String result = null;
+        protected ArrayList<NewsItem> doInBackground(URL... params) {
+            ArrayList<NewsItem> result = null;
             URL url = NetworkUtilities.makeURL("the-next-web", "latest");
             Log.d(TAG, "url: " +url.toString());
             try {
-                result = NetworkUtilities.getResponseFromHttpUrl(url);
+                String json = NetworkUtilities.getResponseFromHttpUrl(url);
+                result = NetworkUtilities.parseJSON(json);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return result;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(final ArrayList<NewsItem> data) {
+            super.onPostExecute(data);
             progress.setVisibility(View.GONE);
-            if (s ==null){
-                textView.setText("Sorry, no text was recieved");
-            }else{
-                textView.setText(s);
+            if (data != null) {
+                NewsAdapter adapter = new NewsAdapter(data, new NewsAdapter.ItemClickListener() {
+                    @Override
+                    public void onItemClick(int clickedItemIndex) {
+                        String url = data.get(clickedItemIndex).getUrl();
+                        Log.d(TAG, String.format("Url %s", url));
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(url));
+                        startActivity(browserIntent);
+                    }
+                });
+                rv.setAdapter(adapter);
+
             }
         }
     }

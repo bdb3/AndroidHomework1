@@ -4,11 +4,18 @@ import android.net.Uri;
 import android.support.annotation.StringDef;
 import android.util.Log;
 
+import com.example.android.newsapp.models.NewsItem;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -22,7 +29,7 @@ public class NetworkUtilities {
     public static final String PARAM_SORTBY = "sortBy";
     public static final String PARAM_APIKEY = "apiKey";
     //TODO:replace APIKEY with working key
-    public static final String APIKEY = "";
+    public static final String APIKEY = "cacb8d48e33f438dbdcddabb90031126";
 
     public static URL makeURL(String source, String sortBy){
         Uri uri = Uri.parse(NEWSAPI_BASE_URL).buildUpon()
@@ -57,5 +64,21 @@ public class NetworkUtilities {
         } finally {
             urlConnection.disconnect();
         }
+    }
+    public static ArrayList<NewsItem> parseJSON(String json) throws JSONException {
+        ArrayList<NewsItem> result = new ArrayList<>();
+        JSONObject main = new JSONObject(json);
+        JSONArray articles = main.getJSONArray("articles");
+
+        for(int i = 0; i < articles.length(); i++){
+            JSONObject item = articles.getJSONObject(i);
+            String title = item.getString("title");
+            String description = item.getString("description");
+            String url = item.getString("url");
+            String publishedAt = item.getString("publishedAt");
+            NewsItem repo = new NewsItem(title, description, url, publishedAt);
+            result.add(repo);
+        }
+        return result;
     }
 }

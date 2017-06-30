@@ -14,15 +14,13 @@
         android:layout_height="wrap_content"
         android:visibility = "gone"
         />
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="495dp">
-    <TextView
+
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/displayNews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-         />
-    </ScrollView>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
     </LinearLayout>
 
 
