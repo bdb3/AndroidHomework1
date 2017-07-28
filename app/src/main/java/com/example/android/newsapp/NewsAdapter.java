@@ -1,6 +1,7 @@
 package com.example.android.newsapp;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * Created by Danny on 6/29/2017.
  */
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder> {
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
 
     private ArrayList<NewsItem> data;
     ItemClickListener listener;
@@ -25,7 +26,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder> {
         this.listener = listener;
     }
     public interface ItemClickListener {
-        void onItemClick(int clickedItemIndex);
+        void onItemClick(Cursor cursor, int clickedItemIndex);
     }
     @Override
     public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -72,7 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder> {
         @Override
         public void onClick(View v) {
             int pos = getAdapterPosition();
-            listener.onItemClick(pos);
+            //listener.onItemClick(pos);
         }
     }
 }

@@ -9,12 +9,23 @@ public class NewsItem {
     private String description;
     private String url;
     private String date;
+    //added imgUrl to load thumbnail image
+    private String imgUrl;
 
-    public NewsItem(String title, String description, String url, String date){
+    public NewsItem(String title, String description, String url, String date, String imgUrl){
         this.title = title;
         this.description = description;
         this.url = url;
         this.date = date;
+        this.imgUrl = imgUrl;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getTitle() {

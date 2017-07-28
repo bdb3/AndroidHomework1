@@ -76,7 +76,8 @@ public class NetworkUtilities {
             String description = item.getString("description");
             String url = item.getString("url");
             String publishedAt = item.getString("publishedAt");
-            NewsItem repo = new NewsItem(title, description, url, publishedAt);
+            String img =item.getString("urlToImage");
+            NewsItem repo = new NewsItem(title, description, url, publishedAt,img);
             result.add(repo);
         }
         return result;
