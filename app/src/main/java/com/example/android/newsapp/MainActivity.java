@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.newsapp.models.Contract;
+import com.example.android.newsapp.models.DBHelper;
+import com.example.android.newsapp.models.DatabaseUtils;
 import com.example.android.newsapp.models.NewsItem;
 
 import org.json.JSONException;
@@ -29,6 +32,8 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Void>,NewsAdapter.ItemClickListener {
@@ -68,19 +73,60 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        NetworkTask task = new NetworkTask();
-        task.execute();
+        int itemNumber = item.getItemId();
+
+        if (itemNumber == R.id.search) {
+            load();
+        }
+
         return true;
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        db = new DBHelper(MainActivity.this).getReadableDatabase();
+        cursor = DatabaseUtils.getAll(db);
+        adapter = new NewsAdapter(cursor, this);
+        rv.setAdapter(adapter);
+        progress.setVisibility(GONE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        db.close();
+        cursor.close();
+    }
+
+    @Override
     public Loader<Void> onCreateLoader(int id, Bundle args) {
-        return null;
+        return new AsyncTaskLoader<Void>(this) {
+
+            @Override
+            protected void onStartLoading() {
+                super.onStartLoading();
+                progress.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public Void loadInBackground() {
+                RefreshTasks.refreshArticles(MainActivity.this);
+                return null;
+            }
+
+        };
     }
 
     @Override
     public void onLoadFinished(Loader<Void> loader, Void data) {
+        progress.setVisibility(GONE);
+        db = new DBHelper(MainActivity.this).getReadableDatabase();
+        cursor = DatabaseUtils.getAll(db);
 
+        adapter = new NewsAdapter(cursor, this);
+        rv.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -105,7 +151,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    class NetworkTask extends AsyncTask<URL,Void, ArrayList<NewsItem>> {
+    /*class NetworkTask extends AsyncTask<URL,Void, ArrayList<NewsItem>> {
 
         @Override
         protected void onPreExecute() {
@@ -147,10 +193,10 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 rv.setAdapter(adapter);
-                */
+
 
             }
         }
 
-    }
+    }*/
 }
