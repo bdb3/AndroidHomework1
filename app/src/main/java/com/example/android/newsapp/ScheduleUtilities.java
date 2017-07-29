@@ -17,18 +17,21 @@ import com.firebase.jobdispatcher.Trigger;
  */
 
 public class ScheduleUtilities {
-    private static final int SCHEDULE_INTERVAL_MINUTES = 360;
-    private static final int SYNC_FLEXTIME_SECONDS = 60;
+    //window start
+    private static final int SCHEDULE_INTERVAL_MINUTES = 60;
+    //window end time minus start time
+    private static final int SYNC_FLEXTIME_SECONDS = 0;
     private static final String NEWS_JOB_TAG = "news_job_tag";
 
     private static boolean sInitialized;
 
     synchronized public static void scheduleRefresh(@NonNull final Context context){
+        //if schedule already initiated do not continue
         if(sInitialized) return;
-
+        //reference driver and dispatcher for use
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
-
+        //sets news job to run recurringly using trigger with execution window set by variables defined above
         Job constraintRefreshJob = dispatcher.newJobBuilder()
                 .setService(NewsJob.class)
                 .setTag(NEWS_JOB_TAG)
@@ -39,8 +42,9 @@ public class ScheduleUtilities {
                         SCHEDULE_INTERVAL_MINUTES + SYNC_FLEXTIME_SECONDS))
                 .setReplaceCurrent(true)
                 .build();
-
+        //schedule job
         dispatcher.schedule(constraintRefreshJob);
+        //note that schedule has been initiated so it is not again
         sInitialized = true;
 
     }

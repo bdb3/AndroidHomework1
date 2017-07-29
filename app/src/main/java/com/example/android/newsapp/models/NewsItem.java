@@ -9,7 +9,7 @@ public class NewsItem {
     private String description;
     private String url;
     private String date;
-    //added imgUrl to load thumbnail image
+    //added imgUrl to load thumbnail image, as well as getters and setters
     private String imgUrl;
 
     public NewsItem(String title, String description, String url, String date, String imgUrl){

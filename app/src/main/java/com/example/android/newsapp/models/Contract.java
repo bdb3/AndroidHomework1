@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 public class Contract {
 
     public static class TABLE_ARTICLES implements BaseColumns {
+        //column names are self explanatory
         public static final String TABLE_NAME = "news";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_DATE = "date";

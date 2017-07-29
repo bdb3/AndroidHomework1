@@ -26,14 +26,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
     private ItemClickListener listener;
     private Context context;
     public static final String TAG = "myadapter";
-
+    //default constructor
     public NewsAdapter(Cursor cursor, ItemClickListener listener){
         this.cursor = cursor;
         this.listener = listener;
     }
+    //interface to allow mainactivity to know which index is clicked
     public interface ItemClickListener {
         void onItemClick(Cursor cursor, int clickedItemIndex);
     }
+    //inflates recyclerview
     @Override
     public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
@@ -46,11 +48,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
         return holder;
     }
 
+    //bind position to holder
     @Override
     public void onBindViewHolder(ItemHolder holder, int position) {
         holder.bind(position);
     }
 
+    //get size of cursor
     @Override
     public int getItemCount() {
         return cursor.getCount();
@@ -68,10 +72,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
             title = (TextView)view.findViewById(R.id.title);
             description = (TextView)view.findViewById(R.id.desc);
             date = (TextView)view.findViewById(R.id.date);
+            //reference to new imageview
             img = (ImageView) view.findViewById(R.id.img);
             view.setOnClickListener(this);
         }
-
+        //binds information from database to recyclerviews
         public void bind(int pos){
             cursor.moveToPosition(pos);
             title.setText(cursor.getString(cursor.getColumnIndex(Contract.TABLE_ARTICLES.COLUMN_NAME_TITLE)));
@@ -79,6 +84,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
             date.setText(cursor.getString(cursor.getColumnIndex(Contract.TABLE_ARTICLES.COLUMN_NAME_DATE)));
             String url = cursor.getString(cursor.getColumnIndex(Contract.TABLE_ARTICLES.COLUMN_NAME_IMGURL));
             Log.d(TAG, url);
+            //load image with picasso from ingurl
             if(url != null){
                 Picasso.with(context)
                         .load(url)
@@ -86,6 +92,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ItemHolder>  {
             }
         }
 
+        //send position to onItemClick interface implemented in mainactivity
         @Override
         public void onClick(View v) {
             int pos = getAdapterPosition();

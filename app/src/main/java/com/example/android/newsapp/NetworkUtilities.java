@@ -31,6 +31,7 @@ public class NetworkUtilities {
     //TODO:replace APIKEY with working key
     public static final String APIKEY = "cacb8d48e33f438dbdcddabb90031126";
 
+    //same as hw2
     public static URL makeURL(String source, String sortBy){
         Uri uri = Uri.parse(NEWSAPI_BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_SOURCE, source)
@@ -47,7 +48,7 @@ public class NetworkUtilities {
         }
         return url;
     }
-
+    //same as hw2
     public static String getResponseFromHttpUrl(URL url) throws IOException{
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try{
@@ -65,6 +66,7 @@ public class NetworkUtilities {
             urlConnection.disconnect();
         }
     }
+
     public static ArrayList<NewsItem> parseJSON(String json) throws JSONException {
         ArrayList<NewsItem> result = new ArrayList<>();
         JSONObject main = new JSONObject(json);
@@ -76,7 +78,9 @@ public class NetworkUtilities {
             String description = item.getString("description");
             String url = item.getString("url");
             String publishedAt = item.getString("publishedAt");
+            //only difference from hw2 is that it now gets the imgurl as well
             String img =item.getString("urlToImage");
+            //creates new news item with info for each article in articles
             NewsItem repo = new NewsItem(title, description, url, publishedAt,img);
             result.add(repo);
         }
